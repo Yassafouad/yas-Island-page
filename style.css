@@ -1265,19 +1265,27 @@ section {
 .attractions-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
     .attractions-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xl);
     }
 }
 
 @media (min-width: 1024px) {
     .attractions-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--spacing-2xl);
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
+@media (min-width: 1280px) {
+    .attractions-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-xl);
     }
 }
 
@@ -1341,6 +1349,119 @@ section {
 
 .attraction-card:hover .attraction-image img {
     transform: scale(1.15) rotate(2deg);
+}
+
+/* ========== ATTRACTION IMAGE SLIDER ========== */
+.attraction-image-slider {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.slider-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+.slider-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    backface-visibility: hidden;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* الصورة النشطة */
+.slider-image.active {
+    transform: rotateY(0deg) scale(1);
+    z-index: 2;
+}
+
+/* الصورة السابقة تخرج لليسار */
+.slider-image.prev {
+    transform: rotateY(-90deg) scale(0.8);
+    z-index: 1;
+}
+
+/* الصورة التالية تنتظر على اليمين */
+.slider-image.next {
+    transform: rotateY(90deg) scale(0.8);
+    z-index: 1;
+}
+
+/* الصور الغير مستخدمة */
+.slider-image:not(.active):not(.prev):not(.next) {
+    transform: rotateY(90deg) scale(0.8);
+    opacity: 0;
+    z-index: 0;
+}
+
+.attraction-card:hover .slider-image.active {
+    transform: rotateY(0deg) scale(1.1);
+}
+
+/* Slider Indicators (Squares) */
+.slider-indicators {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: rgba(0, 168, 255, 1);
+    transition: width 4s linear;
+}
+
+.indicator.active {
+    background: rgba(0, 168, 255, 0.9);
+    border-color: rgba(0, 168, 255, 1);
+    transform: scale(1.2);
+}
+
+.indicator.active::before {
+    width: 100%;
+}
+
+.indicator:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.15);
+}
+
+.attraction-image-slider::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
 }
 
 .attraction-overlay {
@@ -1533,7 +1654,7 @@ body.lang-ar .badge-included {
     align-items: center;
     gap: var(--spacing-xs);
     box-shadow: 0 8px 20px rgba(0, 102, 255, 0.4);
-    z-index: 2;
+    z-index: 20;
     animation: badge-glow 2s ease-in-out infinite;
 }
 
@@ -2451,9 +2572,9 @@ img[loading="lazy"] {
     height: 18px;
     width: auto;
     object-fit: contain;
-    opacity: 0.6;
+    opacity: 1;
     transition: all 0.3s ease;
-    filter: grayscale(100%);
+    filter: grayscale(0%);
 }
 
 .partners-logos-header img:hover {
@@ -2526,6 +2647,7 @@ img[loading="lazy"] {
     align-items: center;
     gap: var(--spacing-xs);
     box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
+    z-index: 20;
 }
 
 .activity-badge i {

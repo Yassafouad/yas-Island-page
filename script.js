@@ -477,6 +477,91 @@ function isInViewport(element) {
     );
 }
 
+// ========== ATTRACTION CARD IMAGE SLIDER ==========
+function initAttractionSliders() {
+    const sliders = document.querySelectorAll('.attraction-image-slider');
+    
+    sliders.forEach(slider => {
+        const images = slider.querySelectorAll('.slider-image');
+        const indicators = slider.querySelectorAll('.indicator');
+        let currentIndex = 0;
+        let autoPlayInterval;
+        
+        // Function to show specific slide with cube rotation
+        function showSlide(index) {
+            // Prevent calling if already transitioning
+            if (slider.classList.contains('transitioning')) {
+                return;
+            }
+            
+            const prevIndex = currentIndex;
+            
+            // Mark as transitioning
+            slider.classList.add('transitioning');
+            
+            // Remove all classes from all images
+            images.forEach(img => {
+                img.classList.remove('active', 'prev', 'next');
+            });
+            
+            // Set the previous image to exit
+            images[prevIndex].classList.add('prev');
+            
+            // Set the new image as active immediately
+            images[index].classList.add('active');
+            
+            // Update indicators
+            indicators.forEach(ind => {
+                ind.classList.remove('active');
+            });
+            indicators[index].classList.add('active');
+            
+            currentIndex = index;
+            
+            // Remove transitioning flag after animation completes
+            setTimeout(() => {
+                slider.classList.remove('transitioning');
+            }, 800); // Match the CSS transition duration
+        }
+        
+        // Function to go to next slide
+        function nextSlide() {
+            const nextIndex = (currentIndex + 1) % images.length;
+            showSlide(nextIndex);
+        }
+        
+        // Auto play functionality
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextSlide, 4000); // Change every 4 seconds
+        }
+        
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
+        
+        // Click indicator to change slide
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                stopAutoPlay();
+                showSlide(index);
+                startAutoPlay();
+            });
+        });
+        
+        // Pause on hover
+        slider.addEventListener('mouseenter', stopAutoPlay);
+        slider.addEventListener('mouseleave', startAutoPlay);
+        
+        // Start auto play
+        startAutoPlay();
+    });
+}
+
+// Initialize sliders when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initAttractionSliders();
+});
+
 // ========== EXPORT FOR TESTING ==========
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
