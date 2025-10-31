@@ -557,9 +557,63 @@ function initAttractionSliders() {
     });
 }
 
+// Fix form iframe width on small screens
+function fixFormIframeWidth() {
+    const formDiv = document.getElementById('zf_div_IFG5OP_CPuFcgiU121T20hngX2_Br9bVbg_Zdy6ZQlY');
+    if (!formDiv) return;
+    
+    const iframe = formDiv.querySelector('iframe');
+    if (!iframe) return;
+    
+    // Get container width
+    const container = formDiv.closest('.container');
+    const containerWidth = container ? container.offsetWidth : window.innerWidth;
+    
+    // Set iframe width to match available space
+    if (window.innerWidth <= 768) {
+        const availableWidth = containerWidth - (window.innerWidth <= 480 ? 1 : 1.5) * 2; // Account for padding
+        iframe.style.width = availableWidth + 'px';
+        iframe.style.maxWidth = '100%';
+        iframe.style.minWidth = '100%';
+    } else {
+        iframe.style.width = '100%';
+    }
+}
+
 // Initialize sliders when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     initAttractionSliders();
+    
+    // Fix form iframe width
+    fixFormIframeWidth();
+    
+    // Fix form iframe on window resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            fixFormIframeWidth();
+        }, 250);
+    });
+    
+    // Fix form iframe after Zoho form loads
+    setTimeout(() => {
+        fixFormIframeWidth();
+    }, 1000);
+    
+    // Fix form iframe when form is visible
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                setTimeout(() => fixFormIframeWidth(), 500);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    const formContainer = document.querySelector('.form-container');
+    if (formContainer) {
+        observer.observe(formContainer);
+    }
 });
 
 // ========== EXPORT FOR TESTING ==========
